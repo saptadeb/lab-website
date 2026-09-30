@@ -1,0 +1,53 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '~/layouts/PageLayout.astro';
+import ProjectCard from '~/components/ProjectCard.astro';
+
+const all = (await getCollection('projects')).filter(
+  (p) => import.meta.env.DEV || !p.data.draft,
+);
+const active = all
+  .filter((p) => p.data.status === 'active')
+  .sort((a, b) => a.data.order - b.data.order);
+const completed = all
+  .filter((p) => p.data.status === 'completed')
+  .sort((a, b) => a.data.order - b.data.order);
+---
+
+<PageLayout
+  title="Research"
+  lede="Placeholder overview paragraph: the through-line connecting the lab's research areas, in two or three sentences."
+>
+  <div class="prose-lab mb-12 max-w-3xl">
+    <p>
+      <strong>Placeholder.</strong> A short research-overview section can go here before the
+      area cards — the questions the lab is organized around, and the methods it brings to
+      them.
+    </p>
+  </div>
+
+  {
+    active.length > 0 ? (
+      <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {active.map((project) => (
+          <ProjectCard project={project} />
+        ))}
+      </ul>
+    ) : (
+      <p class="text-ink-muted">Research areas will be listed here.</p>
+    )
+  }
+
+  {
+    completed.length > 0 && (
+      <section class="mt-16">
+        <h2 class="mb-6 border-b border-line pb-2 text-2xl">Past projects</h2>
+        <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {completed.map((project) => (
+            <ProjectCard project={project} />
+          ))}
+        </ul>
+      </section>
+    )
+  }
+</PageLayout>
