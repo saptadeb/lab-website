@@ -1,0 +1,179 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import PublicationEntry from './PublicationEntry.astro';
+import { groupByYear } from '~/lib/format';
+
+interface Props {
+  publications: CollectionEntry<'publications'>[];
+}
+
+const { publications } = Astro.props;
+
+const groups = groupByYear(publications.map((p) => ({ ...p, year: p.data.year })));
+
+const types = [...new Set(publications.map((p) => p.data.type))].sort();
+const topics = [...new Set(publications.flatMap((p) => p.data.topics))].sort();
+
+const TYPE_LABEL: Record<string, string> = {
+  journal: 'Journal',
+  conference: 'Conference',
+  workshop: 'Workshop',
+  preprint: 'Preprint',
+  thesis: 'Thesis',
+  patent: 'Patent',
+};
+---
+
+<div data-pub-list>
+  <!--
+    Controls are progressive enhancement: the full list is rendered server-side
+    and stays complete and usable if JavaScript never runs.
+  -->
+  <div
+    class="mb-8 hidden gap-4 rounded-card border border-line bg-surface-alt p-4 sm:flex-row sm:items-end"
+    data-pub-controls
+  >
+    <div class="flex flex-1 flex-col gap-4 sm:flex-row sm:items-end">
+      <label class="flex flex-1 flex-col gap-1 text-sm">
+        <span class="font-medium">Search</span>
+        <input
+          type="search"
+          placeholder="Title, author, or venue"
+          data-pub-search
+          class="rounded-md border border-line bg-surface px-3 py-2 text-sm"
+        />
+      </label>
+
+      {
+        types.length > 1 && (
+          <label class="flex flex-col gap-1 text-sm">
+            <span class="font-medium">Type</span>
+            <select
+              data-pub-type
+              class="rounded-md border border-line bg-surface px-3 py-2 text-sm"
+            >
+              <option value="">All types</option>
+              {types.map((type) => (
+                <option value={type}>{TYPE_LABEL[type] ?? type}</option>
+              ))}
+            </select>
+          </label>
+        )
+      }
+
+      {
+        topics.length > 0 && (
+          <label class="flex flex-col gap-1 text-sm">
+            <span class="font-medium">Topic</span>
+            <select
+              data-pub-topic
+              class="rounded-md border border-line bg-surface px-3 py-2 text-sm"
+            >
+              <option value="">All topics</option>
+              {topics.map((topic) => <option value={topic}>{topic}</option>)}
+            </select>
+          </label>
+        )
+      }
+
+      <label class="flex flex-col gap-1 text-sm">
+        <span class="font-medium">Sort</span>
+        <select
+          data-pub-sort
+          class="rounded-md border border-line bg-surface px-3 py-2 text-sm"
+        >
+          <option value="desc">Newest first</option>
+          <option value="asc">Oldest first</option>
+        </select>
+      </label>
+    </div>
+  </div>
+
+  <p class="mb-4 hidden text-sm text-ink-muted" data-pub-count aria-live="polite"></p>
+
+  <div data-pub-groups>
+    {
+      groups.map((group) => (
+        <section class="mb-10" data-pub-group data-year={group.year}>
+          <h2 class="mb-2 border-b-2 border-brand pb-1 text-xl">{group.year}</h2>
+          <ul>
+            {group.items.map((pub) => (
+              <PublicationEntry pub={pub} />
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+
+  <p class="hidden py-12 text-center text-ink-muted" data-pub-empty>
+    No publications match these filters.
+  </p>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-pub-list]');
+  if (root) {
+    const controls = root.querySelector<HTMLElement>('[data-pub-controls]')!;
+    const groupsWrap = root.querySelector<HTMLElement>('[data-pub-groups]')!;
+    const countEl = root.querySelector<HTMLElement>('[data-pub-count]')!;
+    const emptyEl = root.querySelector<HTMLElement>('[data-pub-empty]')!;
+
+    // Reveal the controls only now that the script is running.
+    controls.classList.remove('hidden');
+    controls.classList.add('flex', 'flex-col');
+    countEl.classList.remove('hidden');
+
+    const search = root.querySelector<HTMLInputElement>('[data-pub-search]');
+    const typeSel = root.querySelector<HTMLSelectElement>('[data-pub-type]');
+    const topicSel = root.querySelector<HTMLSelectElement>('[data-pub-topic]');
+    const sortSel = root.querySelector<HTMLSelectElement>('[data-pub-sort]');
+
+    const groups = [...groupsWrap.querySelectorAll<HTMLElement>('[data-pub-group]')];
+    const total = root.querySelectorAll('[data-pub]').length;
+
+    function apply() {
+      const q = (search?.value ?? '').trim().toLowerCase();
+      const type = typeSel?.value ?? '';
+      const topic = topicSel?.value ?? '';
+      let shown = 0;
+
+      for (const group of groups) {
+        let visibleInGroup = 0;
+        for (const item of group.querySelectorAll<HTMLElement>('[data-pub]')) {
+          const topics = (item.dataset.topics ?? '').split('|').filter(Boolean);
+          const matches =
+            (!q || (item.dataset.search ?? '').includes(q)) &&
+            (!type || item.dataset.type === type) &&
+            (!topic || topics.includes(topic));
+          item.hidden = !matches;
+          if (matches) visibleInGroup++;
+        }
+        group.hidden = visibleInGroup === 0;
+        shown += visibleInGroup;
+      }
+
+      countEl.textContent =
+        shown === total
+          ? `${total} publication${total === 1 ? '' : 's'}`
+          : `${shown} of ${total} publications`;
+      emptyEl.classList.toggle('hidden', shown > 0);
+    }
+
+    function applySort() {
+      const asc = sortSel?.value === 'asc';
+      const sorted = [...groups].sort((a, b) => {
+        const ya = Number(a.dataset.year);
+        const yb = Number(b.dataset.year);
+        return asc ? ya - yb : yb - ya;
+      });
+      for (const group of sorted) groupsWrap.appendChild(group);
+    }
+
+    search?.addEventListener('input', apply);
+    typeSel?.addEventListener('change', apply);
+    topicSel?.addEventListener('change', apply);
+    sortSel?.addEventListener('change', applySort);
+    apply();
+  }
+</script>

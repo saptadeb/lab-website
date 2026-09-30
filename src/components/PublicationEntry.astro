@@ -1,0 +1,88 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { parseAuthors } from '~/lib/format';
+
+interface Props {
+  pub: CollectionEntry<'publications'>;
+}
+
+const { pub } = Astro.props;
+const d = pub.data;
+const authors = parseAuthors(d.authors);
+
+const links = [
+  d.doi && { label: 'DOI', href: `https://doi.org/${d.doi.replace(/^https?:\/\/doi\.org\//, '')}` },
+  d.url && { label: 'Link', href: d.url },
+  d.pdf && { label: 'PDF', href: d.pdf },
+  d.code && { label: 'Code', href: d.code },
+].filter(Boolean) as { label: string; href: string }[];
+
+const TYPE_LABEL: Record<string, string> = {
+  journal: 'Journal',
+  conference: 'Conference',
+  workshop: 'Workshop',
+  preprint: 'Preprint',
+  thesis: 'Thesis',
+  patent: 'Patent',
+};
+---
+
+<li
+  class="border-b border-line py-5"
+  data-pub
+  data-year={d.year}
+  data-type={d.type}
+  data-topics={d.topics.join('|')}
+  data-search={`${d.title} ${d.authors.join(' ')} ${d.venue}`.toLowerCase()}
+>
+  <div class="flex flex-wrap items-center gap-2">
+    <span
+      class="rounded-full bg-brand-soft px-2 py-0.5 text-xs font-medium text-brand-dark"
+      >{TYPE_LABEL[d.type] ?? d.type}</span
+    >
+    <span class="text-xs text-ink-muted">{d.year}</span>
+    {d.featured && <span class="text-xs font-medium text-brand">Featured</span>}
+  </div>
+
+  <h3 class="mt-1.5 text-base leading-snug font-medium">
+    {links[0] ? <a class="hover:text-brand hover:underline" href={links[0].href} target="_blank" rel="noopener">{d.title}</a> : d.title}
+  </h3>
+
+  <p class="mt-1 text-sm text-ink-muted">
+    {
+      authors.map((author, i) => (
+        <>
+          {author.isLabMember ? (
+            <span class="font-semibold text-ink">{author.name}</span>
+          ) : (
+            author.name
+          )}
+          {i < authors.length - 1 ? ', ' : ''}
+        </>
+      ))
+    }
+  </p>
+
+  <p class="mt-1 text-sm italic text-ink-muted">
+    {d.venue}{d.note ? ` — ${d.note}` : ''}
+  </p>
+
+  {
+    links.length > 0 && (
+      <ul class="mt-2 flex flex-wrap gap-3 text-sm">
+        {links.map((link) => (
+          <li>
+            <a
+              class="text-brand hover:underline"
+              href={link.href}
+              target="_blank"
+              rel="noopener"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</li>
