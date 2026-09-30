@@ -1,0 +1,118 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens. These are the only place colors and type are defined —
+ * changing the lab's accent color is a one-line edit to --color-brand.
+ */
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Newsreader', ui-serif, Georgia, serif;
+
+  --color-brand: oklch(0.48 0.13 250);
+  --color-brand-dark: oklch(0.38 0.12 250);
+  --color-brand-soft: oklch(0.95 0.02 250);
+
+  --color-ink: oklch(0.22 0.01 260);
+  --color-ink-muted: oklch(0.52 0.01 260);
+  --color-surface: oklch(1 0 0);
+  --color-surface-alt: oklch(0.975 0.003 260);
+  --color-line: oklch(0.9 0.005 260);
+
+  --radius-card: 0.75rem;
+}
+
+/* Dark mode overrides the same tokens, so every utility follows automatically. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --color-brand: oklch(0.72 0.12 250);
+    --color-brand-dark: oklch(0.82 0.1 250);
+    --color-brand-soft: oklch(0.28 0.04 250);
+
+    --color-ink: oklch(0.94 0.005 260);
+    --color-ink-muted: oklch(0.7 0.01 260);
+    --color-surface: oklch(0.19 0.01 260);
+    --color-surface-alt: oklch(0.23 0.012 260);
+    --color-line: oklch(0.32 0.012 260);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-wrap: pretty;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Long-form content rendered from Markdown. */
+.prose-lab {
+  line-height: 1.7;
+}
+.prose-lab > * + * {
+  margin-top: 1.1em;
+}
+.prose-lab h2 {
+  font-size: 1.5rem;
+  margin-top: 2em;
+}
+.prose-lab h3 {
+  font-size: 1.2rem;
+  margin-top: 1.6em;
+}
+.prose-lab a {
+  color: var(--color-brand);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.prose-lab ul,
+.prose-lab ol {
+  padding-left: 1.4em;
+}
+.prose-lab ul { list-style: disc; }
+.prose-lab ol { list-style: decimal; }
+.prose-lab li + li { margin-top: 0.35em; }
+.prose-lab blockquote {
+  border-left: 3px solid var(--color-brand);
+  padding-left: 1em;
+  color: var(--color-ink-muted);
+  font-style: italic;
+}
+.prose-lab code {
+  background: var(--color-surface-alt);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+.prose-lab img {
+  border-radius: var(--radius-card);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
