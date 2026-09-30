@@ -1,0 +1,40 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { formatDate, isoDate } from '~/lib/format';
+import { url } from '~/lib/url';
+
+interface Props {
+  post: CollectionEntry<'news'>;
+  showImage?: boolean;
+}
+
+const { post, showImage = true } = Astro.props;
+const { title, date, summary, image, imageAlt } = post.data;
+const href = url(`/news/${post.id}`);
+---
+
+<article class="group flex gap-4 border-b border-line py-5">
+  {
+    showImage && image && (
+      <a href={href} class="hidden shrink-0 sm:block">
+        <Image
+          src={image}
+          alt={imageAlt ?? ''}
+          width={160}
+          height={160}
+          class="h-24 w-24 rounded-card object-cover"
+        />
+      </a>
+    )
+  }
+  <div>
+    <time datetime={isoDate(date)} class="text-xs uppercase tracking-wide text-ink-muted">
+      {formatDate(date)}
+    </time>
+    <h3 class="mt-1 text-lg leading-snug">
+      <a class="group-hover:text-brand group-hover:underline" href={href}>{title}</a>
+    </h3>
+    {summary && <p class="mt-1 text-sm text-ink-muted">{summary}</p>}
+  </div>
+</article>
