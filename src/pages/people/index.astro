@@ -1,0 +1,56 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '~/layouts/PageLayout.astro';
+import PersonCard from '~/components/PersonCard.astro';
+import { PAGES, SITE } from '~/config/site';
+
+const people = (await getCollection('people'))
+  .filter((p) => import.meta.env.DEV || !p.data.draft)
+  .sort((a, b) => a.data.order - b.data.order || a.data.name.localeCompare(b.data.name));
+
+const byRole = (role: string) => people.filter((p) => p.data.role === role);
+
+const groups = [
+  { heading: 'Principal Investigator', people: byRole('pi') },
+  { heading: 'Postdoctoral Researchers', people: byRole('postdoc') },
+  { heading: 'Graduate Students', people: byRole('grad') },
+  { heading: 'Undergraduate Researchers', people: byRole('undergrad') },
+  { heading: 'Staff', people: byRole('staff') },
+].filter((group) => group.people.length > 0);
+
+const alumni = PAGES.alumni ? [] : byRole('alum');
+---
+
+<PageLayout title="People" description={`The team behind ${SITE.name}.`}>
+  {
+    groups.length === 0 && (
+      <p class="text-ink-muted">Team members will be listed here.</p>
+    )
+  }
+
+  {
+    groups.map((group) => (
+      <section class="mb-14">
+        <h2 class="mb-6 border-b border-line pb-2 text-2xl">{group.heading}</h2>
+        <ul class="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+          {group.people.map((person) => (
+            <PersonCard person={person} />
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+
+  {
+    alumni.length > 0 && (
+      <section class="mb-14">
+        <h2 class="mb-4 border-b border-line pb-2 text-2xl">Alumni</h2>
+        <ul>
+          {alumni.map((person) => (
+            <PersonCard person={person} compact />
+          ))}
+        </ul>
+      </section>
+    )
+  }
+</PageLayout>
