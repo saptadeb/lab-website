@@ -1,0 +1,25 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '~/layouts/PageLayout.astro';
+import PublicationList from '~/components/PublicationList.astro';
+import { SITE } from '~/config/site';
+
+const publications = (await getCollection('publications')).sort((a, b) => {
+  if (b.data.year !== a.data.year) return b.data.year - a.data.year;
+  return a.data.title.localeCompare(b.data.title);
+});
+---
+
+<PageLayout
+  title="Publications"
+  lede="Filter by type or topic, or search by title, author, or venue. Lab members are shown in bold."
+  description={`Publications from ${SITE.name}.`}
+>
+  {
+    publications.length > 0 ? (
+      <PublicationList publications={publications} />
+    ) : (
+      <p class="text-ink-muted">Publications will be listed here.</p>
+    )
+  }
+</PageLayout>
