@@ -1,0 +1,37 @@
+---
+import PageLayout from '~/layouts/PageLayout.astro';
+import { SITE } from '~/config/site';
+---
+
+<PageLayout
+  title="About the lab"
+  lede={SITE.tagline}
+  width="prose"
+  description={`About ${SITE.name} — mission, approach, and overview.`}
+>
+  <div class="prose-lab">
+    <p>
+      <strong>Placeholder.</strong> Two or three paragraphs on what the lab does, why it
+      matters, and who it serves. Replace this text in <code>src/pages/about.astro</code>.
+    </p>
+
+    <h2>Mission</h2>
+    <p>
+      Placeholder mission statement — one paragraph the PI would be comfortable seeing
+      quoted in a press release.
+    </p>
+
+    <h2>Our approach</h2>
+    <ul>
+      <li>Placeholder methodological commitment one.</li>
+      <li>Placeholder methodological commitment two.</li>
+      <li>Placeholder methodological commitment three.</li>
+    </ul>
+
+    <h2>Where we are</h2>
+    <p>
+      {SITE.department}, {SITE.institution}. Get in touch at{' '}
+      <a href={`mailto:${SITE.contact.email}`}>{SITE.contact.email}</a>.
+    </p>
+  </div>
+</PageLayout>

@@ -1,0 +1,46 @@
+---
+import PageLayout from '~/layouts/PageLayout.astro';
+import { SITE } from '~/config/site';
+---
+
+<PageLayout
+  title="Join us"
+  lede="Openings, what we look for, and how to get in touch."
+  width="prose"
+  description={`Open positions and how to apply to ${SITE.name}.`}
+>
+  <div class="prose-lab">
+    <h2>Open positions</h2>
+    <p>
+      <strong>Placeholder.</strong> List current openings here, or state plainly that there
+      are none at the moment — prospective applicants value a dated, honest answer over
+      silence.
+    </p>
+
+    <h3>Postdoctoral researchers</h3>
+    <p>Placeholder: eligibility, start date, how to apply, what to include.</p>
+
+    <h3>Graduate students</h3>
+    <p>
+      Placeholder: which programs admit students who can rotate through the lab, and
+      whether to contact the PI before applying.
+    </p>
+
+    <h3>Undergraduate researchers</h3>
+    <p>Placeholder: expected commitment, credit or pay, when applications open.</p>
+
+    <h2>What we look for</h2>
+    <ul>
+      <li>Placeholder trait or skill one.</li>
+      <li>Placeholder trait or skill two.</li>
+      <li>Placeholder trait or skill three.</li>
+    </ul>
+
+    <h2>How to apply</h2>
+    <p>
+      Email <a href={`mailto:${SITE.contact.email}`}>{SITE.contact.email}</a> with a CV, a
+      short statement of interest, and the names of two references. Placeholder: adjust to
+      the PI's actual preference.
+    </p>
+  </div>
+</PageLayout>
