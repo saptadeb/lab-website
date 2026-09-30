@@ -1,0 +1,34 @@
+---
+import { SITE } from '~/config/site';
+
+const { provider, id } = SITE.analytics;
+---
+
+{
+  provider === 'plausible' && id && (
+    <script is:inline defer data-domain={id} src="https://plausible.io/js/script.js" />
+  )
+}
+{
+  provider === 'goatcounter' && id && (
+    <script
+      is:inline
+      defer
+      data-goatcounter={`https://${id}.goatcounter.com/count`}
+      src="//gc.zgo.at/count.js"
+    />
+  )
+}
+{
+  provider === 'ga4' && id && (
+    <Fragment>
+      <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${id}`} />
+      <script is:inline define:vars={{ id }}>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { window.dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', id);
+      </script>
+    </Fragment>
+  )
+}

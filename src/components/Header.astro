@@ -1,0 +1,91 @@
+---
+import { SITE, VISIBLE_NAV } from '~/config/site';
+import { url, isActive } from '~/lib/url';
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="sticky top-0 z-40 border-b border-line bg-surface/90 backdrop-blur">
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
+    <a href={url('/')} class="group flex flex-col leading-tight">
+      <span class="font-display text-lg font-medium tracking-tight group-hover:text-brand"
+        >{SITE.name}</span
+      >
+      <span class="hidden text-xs text-ink-muted sm:block">{SITE.institution}</span>
+    </a>
+
+    <nav aria-label="Main">
+      <!-- Desktop -->
+      <ul class="hidden items-center gap-1 md:flex">
+        {
+          VISIBLE_NAV.map((item) => (
+            <li>
+              <a
+                href={url(item.href)}
+                aria-current={isActive(currentPath, item.href) ? 'page' : undefined}
+                class:list={[
+                  'rounded-md px-3 py-2 text-sm transition-colors hover:bg-surface-alt hover:text-brand',
+                  isActive(currentPath, item.href)
+                    ? 'text-brand font-medium'
+                    : 'text-ink-muted',
+                ]}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <!-- Mobile: <details> works with JavaScript disabled -->
+      <details class="relative md:hidden" data-mobile-nav>
+        <summary
+          class="flex cursor-pointer list-none items-center gap-2 rounded-md border border-line px-3 py-2 text-sm"
+        >
+          <span class="sr-only">Toggle navigation</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="M4 7h16M4 12h16M4 17h16"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"></path>
+          </svg>
+          <span>Menu</span>
+        </summary>
+        <ul
+          class="absolute right-0 mt-2 w-56 rounded-card border border-line bg-surface p-2 shadow-lg"
+        >
+          {
+            VISIBLE_NAV.map((item) => (
+              <li>
+                <a
+                  href={url(item.href)}
+                  aria-current={isActive(currentPath, item.href) ? 'page' : undefined}
+                  class:list={[
+                    'block rounded-md px-3 py-2 text-sm hover:bg-surface-alt',
+                    isActive(currentPath, item.href) ? 'text-brand font-medium' : '',
+                  ]}
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </details>
+    </nav>
+  </div>
+</header>
+
+<script>
+  // Close the mobile menu on outside click or Escape.
+  const nav = document.querySelector<HTMLDetailsElement>('[data-mobile-nav]');
+  if (nav) {
+    document.addEventListener('click', (event) => {
+      if (nav.open && !nav.contains(event.target as Node)) nav.open = false;
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && nav.open) nav.open = false;
+    });
+  }
+</script>

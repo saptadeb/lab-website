@@ -1,0 +1,54 @@
+---
+import '~/styles/global.css';
+import SEO from '~/components/SEO.astro';
+import Analytics from '~/components/Analytics.astro';
+import Header from '~/components/Header.astro';
+import Footer from '~/components/Footer.astro';
+import { url } from '~/lib/url';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  noindex?: boolean;
+}
+
+const { title, description, image, type, noindex } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href={url('/favicon.svg')} />
+    <link rel="sitemap" href={url('/sitemap-index.xml')} />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="News"
+      href={url('/rss.xml')}
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap"
+    />
+    <SEO {title} {description} {image} {type} {noindex} />
+    <Analytics />
+  </head>
+  <body class="flex min-h-screen flex-col">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-brand focus:px-4 focus:py-2 focus:text-white"
+      >Skip to content</a
+    >
+    <Header />
+    <main id="main" class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

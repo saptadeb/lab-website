@@ -1,0 +1,41 @@
+---
+import { SITE } from '~/config/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Path to a social share image, relative to the site root. */
+  image?: string;
+  type?: 'website' | 'article';
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description = SITE.description,
+  image = '/og-default.png',
+  type = 'website',
+  noindex = false,
+} = Astro.props;
+
+const pageTitle = title ? `${title} · ${SITE.name}` : `${SITE.name} — ${SITE.tagline}`;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL(image, Astro.site).href;
+---
+
+<title>{pageTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex,nofollow" />}
+
+<meta property="og:type" content={type} />
+<meta property="og:title" content={title ?? SITE.name} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:site_name" content={SITE.name} />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title ?? SITE.name} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />

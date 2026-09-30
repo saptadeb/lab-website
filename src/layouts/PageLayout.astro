@@ -1,0 +1,27 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  title: string;
+  /** Shown under the page heading. */
+  lede?: string;
+  description?: string;
+  /** Narrower measure for text-heavy pages. */
+  width?: 'prose' | 'wide';
+}
+
+const { title, lede, description, width = 'wide' } = Astro.props;
+const maxWidth = width === 'prose' ? 'max-w-3xl' : 'max-w-6xl';
+---
+
+<BaseLayout title={title} description={description ?? lede}>
+  <div class={`mx-auto ${maxWidth} px-4 py-12 sm:py-16`}>
+    <header class="max-w-3xl">
+      <h1 class="text-3xl sm:text-4xl">{title}</h1>
+      {lede && <p class="mt-4 text-lg text-ink-muted">{lede}</p>}
+    </header>
+    <div class="mt-10">
+      <slot />
+    </div>
+  </div>
+</BaseLayout>
