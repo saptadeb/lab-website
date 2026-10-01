@@ -14,6 +14,8 @@ backend:
   # See docs/editing-the-site.md.
   # base_url: https://your-worker.workers.dev
 
+# Update both when the custom domain goes live. They only drive the CMS's own
+# "view site" links, so a stale value is cosmetic rather than breaking.
 site_url: https://saptadeb.github.io/lab-website
 display_url: https://saptadeb.github.io/lab-website
 
@@ -24,8 +26,11 @@ slug:
   sanitize_replacement: '-'
 
 # Fallback for anything without a collection-level override.
+# Base-less on purpose. The base path is env-driven (see astro.config.mjs), so a
+# prefix baked into committed content would 404 the day a custom domain lands.
+# Templates prefix these at render time with url() from src/lib/url.ts.
 media_folder: public/uploads
-public_folder: /lab-website/uploads
+public_folder: /uploads
 
 editor:
   preview: false
@@ -41,9 +46,9 @@ collections:
     format: yaml-frontmatter
     create: true
     delete: true
-    slug: '{{year}}-{{month}}-{{slug}}'
+    slug: "{{fields.date | date('yyyy-MM')}}-{{slug}}"
     sortable_fields: [date, title]
-    summary: '{{date | date("yyyy-MM-dd")}} · {{title}}'
+    summary: "{{fields.date | date('yyyy-MM-dd')}} · {{title}}"
     # Images live beside the posts, which is what the schema expects.
     media_folder: images
     public_folder: './images'
@@ -94,6 +99,7 @@ collections:
     create: true
     delete: true
     slug: '{{name}}'
+    identifier_field: name
     sortable_fields: [order, name, role]
     summary: '{{name}} · {{role}}'
     media_folder: photos
@@ -119,7 +125,13 @@ collections:
           hint: Shown under the name, e.g. "PhD Student".
         }
       - { label: Photo, name: photo, widget: image, required: false }
-      - { label: Email, name: email, widget: string, required: false }
+      - {
+          label: Email,
+          name: email,
+          widget: string,
+          required: false,
+          pattern: ['^[^@\s]+@[^@\s]+\.[^@\s]+$', 'Enter a valid email address'],
+        }
       - {
           label: One-line blurb,
           name: blurb,
@@ -133,12 +145,48 @@ collections:
         required: false
         collapsed: true
         fields:
-          - { label: Website, name: website, widget: string, required: false }
-          - { label: Google Scholar, name: scholar, widget: string, required: false }
-          - { label: GitHub, name: github, widget: string, required: false }
-          - { label: LinkedIn, name: linkedin, widget: string, required: false }
-          - { label: X, name: x, widget: string, required: false }
-          - { label: ORCID, name: orcid, widget: string, required: false }
+          - {
+              label: Website,
+              name: website,
+              widget: string,
+              required: false,
+              pattern: ['^https?://', 'Must start with https://'],
+            }
+          - {
+              label: Google Scholar,
+              name: scholar,
+              widget: string,
+              required: false,
+              pattern: ['^https?://', 'Must start with https://'],
+            }
+          - {
+              label: GitHub,
+              name: github,
+              widget: string,
+              required: false,
+              pattern: ['^https?://', 'Must start with https://'],
+            }
+          - {
+              label: LinkedIn,
+              name: linkedin,
+              widget: string,
+              required: false,
+              pattern: ['^https?://', 'Must start with https://'],
+            }
+          - {
+              label: X,
+              name: x,
+              widget: string,
+              required: false,
+              pattern: ['^https?://', 'Must start with https://'],
+            }
+          - {
+              label: ORCID,
+              name: orcid,
+              widget: string,
+              required: false,
+              pattern: ['^https?://', 'Must start with https://'],
+            }
       - { label: Research interests, name: interests, widget: list, required: false, default: [] }
       - {
           label: Years in the lab,
@@ -233,9 +281,9 @@ collections:
     format: yaml-frontmatter
     create: true
     delete: true
-    slug: '{{year}}-{{title}}'
+    slug: '{{fields.year}}-{{title}}'
     sortable_fields: [year, title]
-    summary: '{{year}} · {{title}}'
+    summary: '{{fields.year}} · {{title}}'
     fields:
       - { label: Title, name: title, widget: string }
       - label: Authors
@@ -268,16 +316,28 @@ collections:
           required: false,
           hint: 'Just the identifier, starting with 10. Not the full https://doi.org link.',
         }
-      - { label: Link, name: url, widget: string, required: false }
+      - {
+          label: Link,
+          name: url,
+          widget: string,
+          required: false,
+          pattern: ['^https?://', 'Must start with https://'],
+        }
       - {
           label: PDF,
           name: pdf,
           widget: file,
           required: false,
           media_folder: /public/pdfs,
-          public_folder: /lab-website/pdfs,
+          public_folder: /pdfs,
         }
-      - { label: Code repository, name: code, widget: string, required: false }
+      - {
+          label: Code repository,
+          name: code,
+          widget: string,
+          required: false,
+          pattern: ['^https?://', 'Must start with https://'],
+        }
       - { label: Topics, name: topics, widget: list, required: false, default: [] }
       - {
           label: Show on the home page,
@@ -294,6 +354,7 @@ collections:
         search_fields: [title]
         display_fields: [title]
         value_field: '{{slug}}'
+      - { label: BibTeX, name: bibtex, widget: text, required: false }
       - {
           label: Note,
           name: note,
