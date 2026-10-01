@@ -1,77 +1,15 @@
 ---
 import PageLayout from '~/layouts/PageLayout.astro';
+import ContactForm from '~/components/ContactForm.astro';
+import Map from '~/components/Map.astro';
 import { SITE } from '~/config/site';
-
-const { lat, lon, zoom } = SITE.contact.map;
-const delta = 0.004 * (17 - zoom + 1);
-const bbox = [lon - delta, lat - delta / 2, lon + delta, lat + delta / 2].join('%2C');
-const mapSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat}%2C${lon}`;
-const mapLink = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=${zoom}/${lat}/${lon}`;
 ---
 
 <PageLayout title="Contact" description={`Get in touch with ${SITE.name}.`}>
   <div class="grid gap-12 lg:grid-cols-2">
     <div>
       <h2 class="text-xl">Get in touch</h2>
-
-      {
-        SITE.formEndpoint ? (
-          <form
-            action={SITE.formEndpoint}
-            method="POST"
-            class="mt-6 grid gap-4"
-          >
-            <label class="grid gap-1.5 text-sm">
-              <span class="font-medium">Your name</span>
-              <input
-                required
-                name="name"
-                autocomplete="name"
-                class="rounded-md border border-line bg-surface px-3 py-2"
-              />
-            </label>
-            <label class="grid gap-1.5 text-sm">
-              <span class="font-medium">Email</span>
-              <input
-                required
-                type="email"
-                name="email"
-                autocomplete="email"
-                class="rounded-md border border-line bg-surface px-3 py-2"
-              />
-            </label>
-            <label class="grid gap-1.5 text-sm">
-              <span class="font-medium">Subject</span>
-              <input name="subject" class="rounded-md border border-line bg-surface px-3 py-2" />
-            </label>
-            <label class="grid gap-1.5 text-sm">
-              <span class="font-medium">Message</span>
-              <textarea
-                required
-                name="message"
-                rows="6"
-                class="rounded-md border border-line bg-surface px-3 py-2"></textarea>
-            </label>
-            <!-- Simple bot trap; real filtering is handled by the form provider. -->
-            <input type="text" name="_gotcha" class="hidden" tabindex="-1" aria-hidden="true" />
-            <button
-              type="submit"
-              class="justify-self-start rounded-md bg-brand px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-brand-dark"
-            >
-              Send message
-            </button>
-          </form>
-        ) : (
-          <p class="mt-4 text-ink-muted">
-            Email us at{' '}
-            <a class="text-brand hover:underline" href={`mailto:${SITE.contact.email}`}>
-              {SITE.contact.email}
-            </a>
-            . (A contact form appears here once <code>formEndpoint</code> is set in{' '}
-            <code>src/config/site.ts</code>.)
-          </p>
-        )
-      }
+      <ContactForm />
     </div>
 
     <div>
@@ -86,18 +24,9 @@ const mapLink = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=${zo
         {SITE.contact.phone && <span class="text-ink-muted"> · {SITE.contact.phone}</span>}
       </p>
 
-      <div class="mt-6 overflow-hidden rounded-card border border-line">
-        <iframe
-          src={mapSrc}
-          title="Map showing the lab's location"
-          loading="lazy"
-          class="h-80 w-full border-0"></iframe>
+      <div class="mt-6">
+        <Map />
       </div>
-      <p class="mt-2 text-sm">
-        <a class="text-brand hover:underline" href={mapLink} target="_blank" rel="noopener">
-          Open in OpenStreetMap →
-        </a>
-      </p>
     </div>
   </div>
 </PageLayout>

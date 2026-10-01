@@ -1,0 +1,158 @@
+---
+import { SITE } from '~/config/site';
+
+const { provider, key } = SITE.form;
+const enabled = provider !== 'none' && key !== '';
+
+const endpoint =
+  provider === 'web3forms'
+    ? 'https://api.web3forms.com/submit'
+    : provider === 'formspree'
+      ? `https://formspree.io/f/${key}`
+      : '';
+
+// Each relay names its own fields: the access key, the subject line used in the
+// forwarded email, and the honeypot that silently absorbs bots.
+const hidden =
+  provider === 'web3forms'
+    ? [
+        { name: 'access_key', value: key },
+        { name: 'subject', value: `New message from the ${SITE.name} website` },
+        { name: 'from_name', value: SITE.name },
+      ]
+    : [{ name: '_subject', value: `New message from the ${SITE.name} website` }];
+
+const honeypot = provider === 'web3forms' ? 'botcheck' : '_gotcha';
+
+const field = 'w-full rounded-md border border-line bg-surface px-3 py-2 text-sm';
+---
+
+{
+  enabled ? (
+    <form
+      action={endpoint}
+      method="POST"
+      class="mt-6 grid gap-4"
+      data-contact-form
+      data-fallback={SITE.contact.email}
+    >
+      {hidden.map((h) => (
+        <input type="hidden" name={h.name} value={h.value} />
+      ))}
+
+      <label class="grid gap-1.5 text-sm">
+        <span class="font-medium">
+          Your name <span class="text-ink-muted">(required)</span>
+        </span>
+        <input required name="name" autocomplete="name" class={field} />
+      </label>
+
+      <label class="grid gap-1.5 text-sm">
+        <span class="font-medium">
+          Email <span class="text-ink-muted">(required)</span>
+        </span>
+        <input required type="email" name="email" autocomplete="email" class={field} />
+      </label>
+
+      <label class="grid gap-1.5 text-sm">
+        <span class="font-medium">What is this about?</span>
+        <input name="topic" class={field} />
+      </label>
+
+      <label class="grid gap-1.5 text-sm">
+        <span class="font-medium">
+          Message <span class="text-ink-muted">(required)</span>
+        </span>
+        <textarea required name="message" rows="6" class={field}></textarea>
+      </label>
+
+      {/* Hidden from people and assistive tech; bots fill it in and get dropped. */}
+      <div class="hidden" aria-hidden="true">
+        <label>
+          Leave this field empty
+          <input type="text" name={honeypot} tabindex="-1" autocomplete="off" />
+        </label>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-4">
+        <button
+          type="submit"
+          class="rounded-md bg-brand px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-brand-dark disabled:opacity-60"
+          data-submit
+        >
+          Send message
+        </button>
+        <p class="text-sm" role="status" aria-live="polite" data-status></p>
+      </div>
+
+      <p class="text-xs text-ink-muted">
+        Goes straight to{' '}
+        <a class="hover:underline" href={`mailto:${SITE.contact.email}`}>
+          {SITE.contact.email}
+        </a>
+        . We do not share your address.
+      </p>
+    </form>
+  ) : (
+    <p class="mt-4 text-ink-muted">
+      Email us at{' '}
+      <a class="text-brand hover:underline" href={`mailto:${SITE.contact.email}`}>
+        {SITE.contact.email}
+      </a>
+      . (The contact form turns on once <code>form.key</code> is set in{' '}
+      <code>src/config/site.ts</code>; see <code>docs/free-services.md</code>.)
+    </p>
+  )
+}
+
+<script>
+  // Submit in place so nobody is bounced to the relay's own thank-you page.
+  // Without JavaScript the plain POST still works, which is why the form
+  // keeps a real action and method.
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+
+  if (form) {
+    const button = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+    const status = form.querySelector<HTMLElement>('[data-status]')!;
+
+    const say = (message: string, tone: 'ok' | 'bad' | 'busy') => {
+      status.textContent = message;
+      status.className =
+        tone === 'ok'
+          ? 'text-sm text-brand'
+          : tone === 'bad'
+            ? 'text-sm text-red-600 dark:text-red-400'
+            : 'text-sm text-ink-muted';
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      button.disabled = true;
+      say('Sending…', 'busy');
+
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        });
+        const data = await response.json().catch(() => ({}));
+
+        if (response.ok && data.success !== false) {
+          form.reset();
+          say('Thanks. Your message is on its way.', 'ok');
+          return;
+        }
+        throw new Error(data.message ?? 'Submission failed');
+      } catch {
+        const address = form.dataset.fallback ?? '';
+        say(
+          `Something went wrong. Please email us directly${address ? ` at ${address}` : ''}.`,
+          'bad',
+        );
+      } finally {
+        button.disabled = false;
+      }
+    });
+  }
+</script>
