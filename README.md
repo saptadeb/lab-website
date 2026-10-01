@@ -72,7 +72,11 @@ One-time setup in the GitHub repo:
 
 ## Outstanding TODOs
 
-- [ ] Replace all `Placeholder` text and the sample content files with real content.
+- [ ] Replace the remaining `Placeholder` text and sample content with real content. The
+      PI's own entry and the site's name, department, and description are done.
+- [ ] Confirm the lab name. "Aarabi Lab" is currently an assumption.
+- [ ] Set `pi.email` and `contact.email`; no public address is listed on the UCSF pages.
+- [ ] Set the real address and `contact.map` coordinates, which are still placeholder.
 - [ ] Add `public/og-default.png` (1200×630), the default social share image.
 - [ ] Replace `public/favicon.svg` with the lab's mark.
 - [ ] Set `analytics.id` in `src/config/site.ts` to switch analytics on. Nothing is
@@ -106,6 +110,11 @@ Notes on what was ruled out, and why:
 
 Hand-editing the files directly stays fully supported, and is documented for
 non-developers in [CONTENT.md](./CONTENT.md).
+
+## Project plan
+
+[docs/project-plan.md](./docs/project-plan.md) tracks what is built, what is next, the
+reasoning behind the main technical decisions, and the open questions waiting on the PI.
 
 ## Third-party services
 
