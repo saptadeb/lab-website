@@ -1,2 +1,5 @@
 User-agent: *
 Allow: /
+
+# The editing interface is not for crawlers.
+Disallow: /admin-page/
