@@ -42,6 +42,8 @@ CI runs `check` and `test` before it builds, and will not publish if either fail
 | `src/content/publications/` | One Markdown file per publication |
 | `src/styles/global.css` | Design tokens (colors, type) and long-form text styles |
 | `docs/free-services.md` | Free-tier limits and caveats for every outside service |
+| `public/admin-page/` | The editing forms, served as static files |
+| `worker/` | Cloudflare Worker that commits on the admin page's behalf |
 | `src/pages/` | One file per route |
 | `src/lib/` | Pure helpers, with unit tests beside them in `__tests__/` |
 | `tests/` | Content integrity tests over the Markdown and YAML files |
@@ -77,6 +79,8 @@ One-time setup in the GitHub repo:
 - [ ] Confirm the lab name. "Aarabi Lab" is currently an assumption.
 - [ ] Set `pi.email` and `contact.email`; no public address is listed on the UCSF pages.
 - [ ] Set the real address and `contact.map` coordinates, which are still placeholder.
+- [ ] Deploy the admin Worker and set `API_BASE` in `public/admin-page/config.js`.
+- [ ] Change the admin password from `root` / `admin` before the site is on a domain.
 - [ ] Add `public/og-default.png` (1200×630), the default social share image.
 - [ ] Replace `public/favicon.svg` with the lab's mark.
 - [ ] Set `analytics.id` in `src/config/site.ts` to switch analytics on. Nothing is
@@ -92,7 +96,7 @@ developer. The plan for that, in the order it is being built:
 
 | # | Step | Status |
 | --- | --- | --- |
-| 1 | **Admin page at [`/admin-page`](https://saptadeb.github.io/lab-website/admin-page/)** for creating, editing, and deleting research areas, people, news posts, and publications through forms. Served from this repo and not linked anywhere on the site. A shared passphrase keeps it out of casual reach, but it is obscurity rather than security: write access is enforced by GitHub sign-in, which is the real boundary. Writes ordinary Markdown commits, so content stays in the repo and the CMS can be removed at any time without touching it. See [docs/editing-the-site.md](./docs/editing-the-site.md). | **done** |
+| 1 | **Admin page at [`/admin-page`](https://saptadeb.github.io/lab-website/admin-page/)** for creating, editing, and deleting research areas, people, news posts, and publications through forms, with image uploads. Username and password, then straight to the forms. A free Cloudflare Worker holds the GitHub credential, so the page itself ships no secret, and writes ordinary Markdown commits. Needs the Worker deployed once: [docs/editing-the-site.md](./docs/editing-the-site.md). | **done** |
 | 2 | **Notification when a build fails.** A bad edit never breaks the live site, it just does not publish, so the run opens a GitHub issue naming the commit and linking the failed run, and closes it again on the next success. Direct email is available behind a secret. See [docs/build-notifications.md](./docs/build-notifications.md). | **done** |
 | 3 | **Publications pulled from Zotero or ORCID.** Publications change most often and are the most tedious to type. Adding a paper to a reference manager should be enough to put it on the site. | planned |
 | 4 | **A short recorded walkthrough** for whoever inherits the site. | planned |

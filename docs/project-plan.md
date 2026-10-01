@@ -22,7 +22,7 @@ domain is registered.
 | Content model and schemas | done |
 | Free third-party services wired up | done |
 | Unit tests and CI gate | done |
-| Admin page for non-developer editing | done |
+| Admin page for non-developer editing | done, needs the Worker deployed |
 | Notification when a build fails | done |
 | Publications pulled from ORCID or Zotero | next |
 | Recorded walkthrough for handoff | planned |
@@ -86,9 +86,15 @@ generate from BibTeX, but a form over a hundred-entry list is poor to use and ri
 rewriting every entry on one bad save. Per-entry files give clean create and delete, readable
 diffs, and make the ORCID import straightforward.
 
-**Sveltia CMS rather than Pages CMS.** Pages CMS was the earlier recommendation, but it is
-hosted at the vendor's own domain. The requirement was a page inside this site's own
-structure, which needs a client-side CMS served from `public/`.
+**Custom forms behind a Cloudflare Worker, not an off-the-shelf CMS.** Sveltia CMS came
+first, and it worked, but every git-based CMS makes the editor authenticate with GitHub
+because the browser is the thing doing the committing. Pasting a token is poor for a
+non-developer, and no password compared in page JavaScript is real security on a public
+repository.
+
+Moving the credential into a Worker fixes both. The page holds nothing secret, the password
+is checked server-side, and signing in leads straight to the forms. The cost is one free
+Worker to deploy and a set of forms to maintain rather than inherit.
 
 **Astro 7, not the 5.x originally pinned.** The first pin carried ten security advisories,
 one critical, including an XSS in the `define:vars` directive that the analytics component
