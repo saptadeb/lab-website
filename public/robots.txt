@@ -1,5 +1,10 @@
 User-agent: *
 Allow: /
 
-# The editing interface is not for crawlers.
+# The editing interface is kept out of search results by the noindex meta tag on
+# the page itself, which is the mechanism that actually works here: crawlers read
+# robots.txt only from a domain root, and this file is currently served under
+# /lab-website/. Both paths are listed so the rule starts applying the moment the
+# site moves to its own domain.
 Disallow: /admin-page/
+Disallow: /lab-website/admin-page/
