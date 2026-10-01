@@ -3,6 +3,8 @@ name: Deploy site
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -10,13 +12,33 @@ permissions:
   pages: write
   id-token: write
 
-# Let a newer push cancel an in-flight deploy.
+# Let a newer push cancel an in-flight run.
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  # Type checking and unit tests gate everything below them.
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Type-check templates and content schemas
+        run: npm run check
+
+      - name: Unit tests
+        run: npm run test
+
   build:
+    needs: verify
     runs-on: ubuntu-latest
     env:
       # Once a custom domain is live, set repository variables SITE_URL
@@ -28,7 +50,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: .nvmrc
           cache: npm
 
       - run: npm ci
@@ -39,8 +61,10 @@ jobs:
         with:
           path: dist
 
+  # Pull requests stop after build; only pushes to main publish.
   deploy:
     needs: build
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
