@@ -24,21 +24,22 @@ function collection(name: string): { slug: string; path: string }[] {
     .map((file) => ({ slug: file.replace(/\.mdx?$/, ''), path: join(CONTENT, name, file) }));
 }
 
-const publications = parse(readFileSync('src/data/publications.yaml', 'utf8')) as Record<
-  string,
-  any
->[];
+const publicationFiles = collection('publications');
+const publications = publicationFiles.map((entry) => ({
+  ...frontmatter(entry.path),
+  id: entry.slug,
+  path: entry.path,
+})) as Record<string, any>[];
 const projects = collection('projects');
 const people = collection('people');
 const news = collection('news');
 
-describe('publications.yaml', () => {
-  it('parses as a list of entries', () => {
-    expect(Array.isArray(publications)).toBe(true);
+describe('publications', () => {
+  it('has at least one entry', () => {
     expect(publications.length).toBeGreaterThan(0);
   });
 
-  it.each(['id', 'title', 'authors', 'venue', 'year'])(
+  it.each(['title', 'authors', 'venue', 'year'])(
     'gives every entry a %s',
     (field) => {
       for (const pub of publications) {
@@ -47,10 +48,12 @@ describe('publications.yaml', () => {
     },
   );
 
-  // A duplicate id silently overwrites an entry in Astro's content store.
-  it('uses a unique id for every entry', () => {
-    const ids = publications.map((pub) => pub.id);
-    expect(ids).toHaveLength(new Set(ids).size);
+  it('uses url-safe filenames, since they become the entry id', () => {
+    for (const { slug, path } of publicationFiles) {
+      expect(slug, `${path} should be lowercase and hyphenated`).toMatch(
+        /^[a-z0-9]+(-[a-z0-9]+)*$/,
+      );
+    }
   });
 
   it('lists at least one author per entry', () => {
