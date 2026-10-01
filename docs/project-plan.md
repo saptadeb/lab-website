@@ -23,8 +23,8 @@ domain is registered.
 | Free third-party services wired up | done |
 | Unit tests and CI gate | done |
 | Admin page for non-developer editing | done |
-| Email on failed build | next |
-| Publications pulled from ORCID or Zotero | planned |
+| Notification when a build fails | done |
+| Publications pulled from ORCID or Zotero | next |
 | Recorded walkthrough for handoff | planned |
 | Real content throughout | blocked on the PI |
 | Domain, polish, accessibility pass, handoff | planned |
@@ -60,17 +60,14 @@ site, with create, edit, and delete forms over all four collections. See
 
 ## Next, in order
 
-**1. Email when a build fails.** A bad edit cannot break the live site, it simply does not
-publish. That silence is the main way an edit gets lost, so whoever edited needs to be told.
-
-**2. Publications from ORCID or Zotero.** Publications change most often and are the most
+**1. Publications from ORCID or Zotero.** Publications change most often and are the most
 tedious to enter by hand. The PI has an ORCID record (0000-0002-9514-9873), so a scheduled
 job can pull from it and open a pull request. This removes the highest-friction editing task
 entirely.
 
-**3. Recorded walkthrough.** Ten minutes, screen-recorded, for whoever inherits the site.
+**2. Recorded walkthrough.** Ten minutes, screen-recorded, for whoever inherits the site.
 
-**4. Polish before handoff.** Social share image, real favicon, Lighthouse and accessibility
+**3. Polish before handoff.** Social share image, real favicon, Lighthouse and accessibility
 passes, a check at 320px width, then the domain.
 
 ## Decisions, and why
@@ -96,6 +93,11 @@ structure, which needs a client-side CMS served from `public/`.
 **Astro 7, not the 5.x originally pinned.** The first pin carried ten security advisories,
 one critical, including an XSS in the `define:vars` directive that the analytics component
 uses. Upgrading cleared all of them.
+
+**Failure notification through a GitHub issue, not only email.** Opening an issue needs no
+secret, works the moment it is pushed, and leaves a visible record that closes itself. Direct
+SMTP mail is wired up behind a secret for the case where the editor is not the repository
+owner, since issue notifications follow watchers rather than a chosen address.
 
 **Section visibility behind flags.** Every section from the worksheet, including the ones not
 yet built, exists as a flag in `PAGES` in `src/config/site.ts`. Turning one on is a one-word

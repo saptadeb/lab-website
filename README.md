@@ -93,7 +93,7 @@ developer. The plan for that, in the order it is being built:
 | # | Step | Status |
 | --- | --- | --- |
 | 1 | **Admin page at [`/admin-page`](https://saptadeb.github.io/lab-website/admin-page/)** for creating, editing, and deleting research areas, people, news posts, and publications through forms. Served from this repo and not linked anywhere on the site. A shared passphrase keeps it out of casual reach, but it is obscurity rather than security: write access is enforced by GitHub sign-in, which is the real boundary. Writes ordinary Markdown commits, so content stays in the repo and the CMS can be removed at any time without touching it. See [docs/editing-the-site.md](./docs/editing-the-site.md). | **done** |
-| 2 | **Email when a build fails.** A bad edit never breaks the live site, it just does not publish, so the editor needs to be told. | planned |
+| 2 | **Notification when a build fails.** A bad edit never breaks the live site, it just does not publish, so the run opens a GitHub issue naming the commit and linking the failed run, and closes it again on the next success. Direct email is available behind a secret. See [docs/build-notifications.md](./docs/build-notifications.md). | **done** |
 | 3 | **Publications pulled from Zotero or ORCID.** Publications change most often and are the most tedious to type. Adding a paper to a reference manager should be enough to put it on the site. | planned |
 | 4 | **A short recorded walkthrough** for whoever inherits the site. | planned |
 

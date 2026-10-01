@@ -93,9 +93,11 @@ The other options, for completeness:
 - **Break the live site.** If an edit produces content the site cannot build, the build
   fails and the previous version stays up. Nothing the CMS can write will take the site down.
 
-  **But nothing tells you yet.** A failed save is silent: the site simply does not change.
-  Until build-failure email is set up, check the repository's **Actions** tab after saving.
-  A green tick means it published.
+  **And you will be told.** A failed save opens an issue on the repository naming the
+  commit and linking the failed run, and GitHub emails that to whoever watches the
+  repository. It closes itself once a build succeeds again, so an open `build-failure`
+  issue always means the live site is behind. See
+  [build-notifications.md](./build-notifications.md).
 
 ## When something goes wrong
 
