@@ -10,11 +10,25 @@ Requires Node 22 LTS.
 
 ```bash
 npm install
-npm run dev      # http://localhost:4321/lab-website
-npm run build    # production build into dist/
-npm run preview  # serve the production build locally
-npm run check    # type-check templates and content schemas
+npm run dev         # http://localhost:4321/lab-website
+npm run build       # production build into dist/
+npm run preview     # serve the production build locally
+npm run check       # type-check templates and content schemas
+npm run test        # unit tests
+npm run test:watch  # unit tests, re-running on change
+npm run verify      # check + test, the same gate CI applies
 ```
+
+## Tests
+
+`npm run test` runs Vitest over the pure logic in `src/lib/` and over the content files
+themselves. The content tests are the ones that matter day to day: they catch a duplicate
+publication id, a `project:` pointing at a research area that does not exist, a doi stored
+as a full url, an unknown role on a person, a filename that would produce a broken page
+address, and an unparseable date. Those are the mistakes hand-editing YAML invites, and
+Astro's own schemas cannot express them.
+
+CI runs `check` and `test` before it builds, and will not publish if either fails.
 
 ## Where things live
 
@@ -29,6 +43,8 @@ npm run check    # type-check templates and content schemas
 | `src/styles/global.css` | Design tokens (colors, type) and long-form text styles |
 | `docs/free-services.md` | Free-tier limits and caveats for every outside service |
 | `src/pages/` | One file per route |
+| `src/lib/` | Pure helpers, with unit tests beside them in `__tests__/` |
+| `tests/` | Content integrity tests over the Markdown and YAML files |
 | `public/` | Files served as-is: favicon, robots.txt, PDFs, images |
 
 **Adding content is documented for non-developers in [CONTENT.md](./CONTENT.md).**
