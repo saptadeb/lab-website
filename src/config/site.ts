@@ -119,6 +119,7 @@ export const PAGES = {
 type NavItem = { label: string; href: string; show: boolean };
 
 export const NAV: NavItem[] = [
+  { label: 'Home', href: '/', show: PAGES.home },
   { label: 'Research', href: '/research', show: PAGES.research },
   { label: 'Publications', href: '/publications', show: PAGES.publications },
   { label: 'People', href: '/people', show: PAGES.people },
