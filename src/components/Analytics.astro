@@ -2,15 +2,13 @@
 import { SITE } from '~/config/site';
 
 const { provider, id } = SITE.analytics;
+
+// Nothing is loaded until an id is configured, so the site ships tracker-free.
+const enabled = provider !== 'none' && id !== '';
 ---
 
 {
-  provider === 'plausible' && id && (
-    <script is:inline defer data-domain={id} src="https://plausible.io/js/script.js" />
-  )
-}
-{
-  provider === 'goatcounter' && id && (
+  enabled && provider === 'goatcounter' && (
     <script
       is:inline
       defer
@@ -20,7 +18,22 @@ const { provider, id } = SITE.analytics;
   )
 }
 {
-  provider === 'ga4' && id && (
+  enabled && provider === 'cloudflare' && (
+    <script
+      is:inline
+      defer
+      src="https://static.cloudflareinsights.com/beacon.min.js"
+      data-cf-beacon={`{"token": "${id}"}`}
+    />
+  )
+}
+{
+  enabled && provider === 'plausible' && (
+    <script is:inline defer data-domain={id} src="https://plausible.io/js/script.js" />
+  )
+}
+{
+  enabled && provider === 'ga4' && (
     <Fragment>
       <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${id}`} />
       <script is:inline define:vars={{ id }}>

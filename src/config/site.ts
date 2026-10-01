@@ -43,19 +43,37 @@ export const SITE = {
   },
 
   /**
-   * Analytics. Leave provider as 'none' until the owner picks one;
-   * this also determines what the privacy statement needs to say.
+   * Analytics. Nothing loads until `id` is filled in, so the site ships
+   * tracker-free by default.
+   *
+   * goatcounter  free, cookieless. `id` is the site code you pick at signup,
+   *              i.e. the <code> in https://<code>.goatcounter.com
+   * cloudflare   free, cookieless. `id` is the beacon token.
+   * plausible    paid. `id` is the bare domain, e.g. arabilab.com
+   * ga4          free but sets cookies, so it needs a privacy notice.
+   *
+   * See docs/free-services.md before changing this.
    */
   analytics: {
-    provider: 'none' as 'none' | 'plausible' | 'goatcounter' | 'ga4',
+    provider: 'goatcounter' as 'none' | 'goatcounter' | 'cloudflare' | 'plausible' | 'ga4',
     id: '',
   },
 
   /**
-   * Contact form endpoint (Formspree / Netlify Forms / etc.).
-   * Empty string renders a plain mailto: link instead of a form.
+   * Contact form. Static hosting cannot send mail, so submissions go through
+   * a third-party relay that forwards them to `contact.email`.
+   *
+   * web3forms  free, 250 submissions/month. `key` is the access key emailed
+   *            to you at https://web3forms.com (no account needed).
+   * formspree  free, 50 submissions/month. `key` is the form ID from the
+   *            endpoint URL, i.e. the XXXX in https://formspree.io/f/XXXX
+   *
+   * While `key` is empty the page shows a plain mailto: link instead.
    */
-  formEndpoint: '',
+  form: {
+    provider: 'web3forms' as 'none' | 'web3forms' | 'formspree',
+    key: '',
+  },
 } as const;
 
 /**
