@@ -3,7 +3,7 @@ title: Placeholder title of a journal article that spans a couple of lines
 authors:
 - '**Placeholder Graduate Student**'
 - External Coauthor
-- '**Dr. Placeholder Arabi**'
+- '**Placeholder PI**'
 venue: Placeholder Journal of Results, 12(3), 145–162
 year: 2026
 type: journal

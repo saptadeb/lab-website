@@ -5,19 +5,21 @@
 
 export const SITE = {
   /** Lab name as it appears in the header and page titles. */
-  name: 'Arabi Lab',
+  name: 'Aarabi Lab',
   /** Short line under the name in the header / on the home hero. */
-  tagline: 'Placeholder tagline, one sentence on what the lab studies.',
+  tagline:
+    'Vascular and trauma surgery research on limb ischemia, automated ultrasound monitoring, and care for underserved populations.',
   /** Used for SEO descriptions where a page does not supply its own. */
   description:
-    'Placeholder description of the lab, its research focus, and its institution.',
-  institution: 'Placeholder University',
-  department: 'Department of Placeholder',
+    'The Aarabi Lab at UCSF studies ways to limit ischemic damage in traumatic limb injuries, automated ultrasound monitoring of critically ill patients, and novel therapeutics for resource-limited settings.',
+  institution: 'University of California, San Francisco',
+  department: 'Department of Surgery, UCSF East Bay Surgery Program',
 
   pi: {
-    name: 'Dr. Placeholder Arabi',
-    title: 'Principal Investigator',
-    email: 'pi@example.edu',
+    name: 'Shahram Aarabi, MD, MPH',
+    title: 'Associate Professor of Surgery',
+    // No public email is listed on the UCSF pages; confirm before publishing one.
+    email: '',
   },
 
   contact: {

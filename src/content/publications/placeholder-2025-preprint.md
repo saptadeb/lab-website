@@ -2,7 +2,7 @@
 title: Placeholder title of a preprint under review
 authors:
 - '**Placeholder Graduate Student**'
-- '**Dr. Placeholder Arabi**'
+- '**Placeholder PI**'
 venue: arXiv:2500.00000
 year: 2025
 type: preprint

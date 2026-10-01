@@ -3,7 +3,7 @@ title: Placeholder title of an earlier journal article
 authors:
 - External First Author
 - '**Placeholder Alum**'
-- '**Dr. Placeholder Arabi**'
+- '**Placeholder PI**'
 venue: Placeholder Letters, 8(1), 1–14
 year: 2023
 type: journal

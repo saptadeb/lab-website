@@ -2,7 +2,7 @@
 title: Placeholder title of a conference paper
 authors:
 - '**Placeholder Postdoc**'
-- '**Dr. Placeholder Arabi**'
+- '**Placeholder PI**'
 venue: Proceedings of the Placeholder Conference (PC 2025)
 year: 2025
 type: conference
