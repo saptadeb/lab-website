@@ -64,7 +64,7 @@ To change it, generate a new hash and paste it into `GATE_HASH` in
 node -e "console.log(require('node:crypto').createHash('sha256').update('USERNAME:PASSPHRASE').digest('hex'))"
 ```
 
-The starter credentials are `lab` / `change-me-before-handoff`. Change them.
+The current credentials are `root` / `admin`.
 
 ### If you want real authentication
 
