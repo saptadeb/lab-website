@@ -27,6 +27,7 @@ npm run check    # type-check templates and content schemas
 | `src/content/news/` | One Markdown file per news post |
 | `src/data/publications.yaml` | All publications, in one file |
 | `src/styles/global.css` | Design tokens (colors, type) and long-form text styles |
+| `docs/free-services.md` | Free-tier limits and caveats for every outside service |
 | `src/pages/` | One file per route |
 | `public/` | Files served as-is: favicon, robots.txt, PDFs, images |
 
@@ -58,7 +59,14 @@ One-time setup in the GitHub repo:
 - [ ] Replace all `Placeholder` text and the sample content files with real content.
 - [ ] Add `public/og-default.png` (1200×630), the default social share image.
 - [ ] Replace `public/favicon.svg` with the lab's mark.
-- [ ] Set `analytics.provider` in `src/config/site.ts` (and add a privacy statement if the
-      choice involves cookies).
-- [ ] Set `formEndpoint` in `src/config/site.ts` to enable the contact form.
+- [ ] Set `analytics.id` in `src/config/site.ts` to switch analytics on. Nothing is
+      loaded while it is empty, so the site currently ships with no tracking.
+- [ ] Set `form.key` in `src/config/site.ts` to switch the contact form on. Until then
+      the page shows a mailto link.
 - [ ] Set the real coordinates in `contact.map`.
+
+## Third-party services
+
+Analytics, the contact form, the map, fonts, hosting, and the domain all run on free
+tiers. **[docs/free-services.md](./docs/free-services.md)** lists what each one allows,
+what it costs if the lab outgrows it, and the privacy trade-offs that come with each.
