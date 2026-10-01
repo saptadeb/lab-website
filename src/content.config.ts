@@ -1,5 +1,5 @@
 import { defineCollection, reference, z } from 'astro:content';
-import { glob, file } from 'astro/loaders';
+import { glob } from 'astro/loaders';
 
 /**
  * Content model. Every schema is validated at build time, so a typo in a
@@ -81,13 +81,14 @@ const news = defineCollection({
 });
 
 /**
- * Publications live in one YAML file rather than one file each: easier to
- * maintain by hand and easy to generate from a BibTeX or Scholar export.
+ * One file per publication. A single big YAML file is tidier to generate from
+ * BibTeX, but it makes form-based editing awkward and risks rewriting every
+ * entry on one bad save, so each paper gets its own file. The filename is the
+ * entry's id.
  */
 const publications = defineCollection({
-  loader: file('./src/data/publications.yaml'),
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/publications' }),
   schema: z.object({
-    id: z.string(),
     title: z.string(),
     /** Author strings; mark lab members with ** around the name. */
     authors: z.array(z.string()),
