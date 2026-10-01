@@ -1,0 +1,58 @@
+---
+import { SITE } from '~/config/site';
+
+const { lat, lon, zoom } = SITE.contact.map;
+
+/*
+ * OpenStreetMap's embed takes a bounding box, not a centre and zoom, so derive
+ * one. Longitude degrees per pixel halve with each zoom level; the embed is
+ * roughly 600x320, and latitude degrees are scaled by cos(lat) because
+ * meridians converge toward the poles.
+ */
+const degreesPerPixel = 360 / (256 * 2 ** zoom);
+const lonSpan = (degreesPerPixel * 600) / 2;
+const latSpan = ((degreesPerPixel * 320) / 2) * Math.cos((lat * Math.PI) / 180);
+
+const bbox = [lon - lonSpan, lat - latSpan, lon + lonSpan, lat + latSpan]
+  .map((n) => n.toFixed(5))
+  .join(',');
+
+const embed = `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(bbox)}&layer=mapnik&marker=${lat},${lon}`;
+const viewLarger = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=${zoom}/${lat}/${lon}`;
+
+// Both directions links are keyless and free to use.
+const osmDirections = `https://www.openstreetmap.org/directions?to=${lat},${lon}`;
+const googleDirections = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`;
+---
+
+<div class="overflow-hidden rounded-card border border-line">
+  <iframe
+    src={embed}
+    title={`Map showing the location of ${SITE.name}`}
+    loading="lazy"
+    referrerpolicy="no-referrer-when-downgrade"
+    class="h-80 w-full border-0"></iframe>
+</div>
+
+<ul class="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm">
+  <li>
+    <a class="text-brand hover:underline" href={viewLarger} target="_blank" rel="noopener">
+      View larger map
+    </a>
+  </li>
+  <li>
+    <a class="text-brand hover:underline" href={osmDirections} target="_blank" rel="noopener">
+      Directions (OpenStreetMap)
+    </a>
+  </li>
+  <li>
+    <a
+      class="text-brand hover:underline"
+      href={googleDirections}
+      target="_blank"
+      rel="noopener"
+    >
+      Directions (Google Maps)
+    </a>
+  </li>
+</ul>
