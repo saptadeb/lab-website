@@ -1,6 +1,7 @@
 ---
 import type { GetStaticPaths } from 'astro';
 import { getCollection, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
 import { Image } from 'astro:assets';
 import BaseLayout from '~/layouts/BaseLayout.astro';
 import PublicationEntry from '~/components/PublicationEntry.astro';
@@ -12,6 +13,10 @@ export const getStaticPaths: GetStaticPaths = async () => {
   );
   return people.map((person) => ({ params: { slug: person.id }, props: { person } }));
 };
+
+interface Props {
+  person: CollectionEntry<'people'>;
+}
 
 const { person } = Astro.props;
 const d = person.data;
