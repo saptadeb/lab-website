@@ -112,6 +112,8 @@ const TYPE_LABEL: Record<string, string> = {
 </div>
 
 <script>
+  import { matches, sortYears } from '../lib/publications';
+
   const root = document.querySelector<HTMLElement>('[data-pub-list]');
   if (root) {
     const controls = root.querySelector<HTMLElement>('[data-pub-controls]')!;
@@ -133,21 +135,26 @@ const TYPE_LABEL: Record<string, string> = {
     const total = root.querySelectorAll('[data-pub]').length;
 
     function apply() {
-      const q = (search?.value ?? '').trim().toLowerCase();
-      const type = typeSel?.value ?? '';
-      const topic = topicSel?.value ?? '';
+      const filters = {
+        query: search?.value ?? '',
+        type: typeSel?.value ?? '',
+        topic: topicSel?.value ?? '',
+      };
       let shown = 0;
 
       for (const group of groups) {
         let visibleInGroup = 0;
         for (const item of group.querySelectorAll<HTMLElement>('[data-pub]')) {
-          const topics = (item.dataset.topics ?? '').split('|').filter(Boolean);
-          const matches =
-            (!q || (item.dataset.search ?? '').includes(q)) &&
-            (!type || item.dataset.type === type) &&
-            (!topic || topics.includes(topic));
-          item.hidden = !matches;
-          if (matches) visibleInGroup++;
+          const visible = matches(
+            {
+              search: item.dataset.search ?? '',
+              type: item.dataset.type ?? '',
+              topics: (item.dataset.topics ?? '').split('|').filter(Boolean),
+            },
+            filters,
+          );
+          item.hidden = !visible;
+          if (visible) visibleInGroup++;
         }
         group.hidden = visibleInGroup === 0;
         shown += visibleInGroup;
@@ -161,13 +168,15 @@ const TYPE_LABEL: Record<string, string> = {
     }
 
     function applySort() {
-      const asc = sortSel?.value === 'asc';
-      const sorted = [...groups].sort((a, b) => {
-        const ya = Number(a.dataset.year);
-        const yb = Number(b.dataset.year);
-        return asc ? ya - yb : yb - ya;
-      });
-      for (const group of sorted) groupsWrap.appendChild(group);
+      const direction = sortSel?.value === 'asc' ? 'asc' : 'desc';
+      const order = sortYears(
+        groups.map((group) => Number(group.dataset.year)),
+        direction,
+      );
+      for (const year of order) {
+        const group = groups.find((g) => Number(g.dataset.year) === year);
+        if (group) groupsWrap.appendChild(group);
+      }
     }
 
     search?.addEventListener('input', apply);
