@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { parseAuthors } from '~/lib/format';
+import { url } from '~/lib/url';
 
 interface Props {
   pub: CollectionEntry<'publications'>;
@@ -13,7 +14,7 @@ const authors = parseAuthors(d.authors);
 const links = [
   d.doi && { label: 'DOI', href: `https://doi.org/${d.doi.replace(/^https?:\/\/doi\.org\//, '')}` },
   d.url && { label: 'Link', href: d.url },
-  d.pdf && { label: 'PDF', href: d.pdf },
+  d.pdf && { label: 'PDF', href: url(d.pdf) },
   d.code && { label: 'Code', href: d.code },
 ].filter(Boolean) as { label: string; href: string }[];
 
