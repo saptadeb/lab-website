@@ -5,3 +5,7 @@ node_modules/
 *.log
 .env
 .env.production
+
+# Worker build artefacts and local wrangler state
+worker/node_modules/
+worker/.wrangler/

@@ -1,0 +1,16 @@
+name = "lab-website-admin"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+
+[vars]
+# The site's origin. The Worker refuses cross-origin calls from anywhere else.
+# Add the custom domain here as a second comma-separated value when it goes live.
+ALLOWED_ORIGIN = "https://saptadeb.github.io"
+GITHUB_REPO = "saptadeb/lab-website"
+GITHUB_BRANCH = "main"
+ADMIN_USERNAME = "root"
+
+# Secrets are NOT set here. Set them once with:
+#   npx wrangler secret put GITHUB_TOKEN
+#   npx wrangler secret put ADMIN_PASSWORD_HASH
+#   npx wrangler secret put SESSION_SECRET
