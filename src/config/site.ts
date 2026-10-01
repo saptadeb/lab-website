@@ -7,7 +7,7 @@ export const SITE = {
   /** Lab name as it appears in the header and page titles. */
   name: 'Arabi Lab',
   /** Short line under the name in the header / on the home hero. */
-  tagline: 'Placeholder tagline — one sentence on what the lab studies.',
+  tagline: 'Placeholder tagline, one sentence on what the lab studies.',
   /** Used for SEO descriptions where a page does not supply its own. */
   description:
     'Placeholder description of the lab, its research focus, and its institution.',
@@ -24,7 +24,7 @@ export const SITE = {
     email: 'lab@example.edu',
     phone: '',
     address: ['Placeholder Building, Room 000', '123 Campus Drive', 'City, ST 00000'],
-    /** OpenStreetMap embed bbox/marker — replace with the real coordinates. */
+    /** OpenStreetMap embed bbox/marker. Replace with the real coordinates. */
     map: {
       lat: 42.2808,
       lon: -83.743,
@@ -63,7 +63,7 @@ export const SITE = {
  * section exists, and it appears in the nav automatically.
  */
 export const PAGES = {
-  // Tier A — built now
+  // Tier A: built now
   home: true,
   about: true,
   research: true,
@@ -73,7 +73,7 @@ export const PAGES = {
   join: true,
   contact: true,
 
-  // Tier B — scaffolded when confirmed
+  // Tier B: scaffolded when confirmed
   projects: false,
   alumni: false,
   datasets: false,

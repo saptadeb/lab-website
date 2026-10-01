@@ -1,7 +1,7 @@
 # Lab website
 
 Static site for the lab, built with [Astro](https://astro.build) and
-[Tailwind CSS](https://tailwindcss.com). No CMS, no server, no database — content lives in
+[Tailwind CSS](https://tailwindcss.com). No CMS, no server, no database. Content lives in
 Markdown and YAML files in this repository, and every push to `main` republishes the site.
 
 ## Local development
@@ -56,7 +56,7 @@ One-time setup in the GitHub repo:
 ## Outstanding TODOs
 
 - [ ] Replace all `Placeholder` text and the sample content files with real content.
-- [ ] Add `public/og-default.png` (1200×630) — the default social share image.
+- [ ] Add `public/og-default.png` (1200×630), the default social share image.
 - [ ] Replace `public/favicon.svg` with the lab's mark.
 - [ ] Set `analytics.provider` in `src/config/site.ts` (and add a privacy statement if the
       choice involves cookies).

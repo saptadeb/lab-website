@@ -4,7 +4,7 @@ You don't need to know how to code to keep this site current. Everything is a te
 this repository, and the site rebuilds itself within about a minute of you saving a change.
 
 **The easiest way to edit:** open the file on GitHub, click the pencil icon, make your
-change, and click *Commit changes*. That's it — the live site updates on its own.
+change, and click *Commit changes*. That's it. The live site updates on its own.
 
 Each file starts with a block between `---` lines. That's the structured part (title, date,
 role). Everything below the second `---` is ordinary text, where `**bold**`, `*italic*`,
@@ -15,7 +15,7 @@ role). Everything below the second `---` is ordinary text, where `**bold**`, `*i
 ## Add a publication
 
 Open **`src/data/publications.yaml`** and add a block like this. Order in the file doesn't
-matter — the site groups by year automatically.
+matter; the site groups by year automatically.
 
 ```yaml
 - id: patel-2026-nature
@@ -79,7 +79,7 @@ filename with the date keeps the folder tidy.
 ---
 title: 'Our paper on placeholder things was accepted'
 date: 2026-10-14
-summary: One sentence — this is what shows on the news list and in the RSS feed.
+summary: One sentence that shows on the news list and in the RSS feed.
 tags: ['publication']
 ---
 
@@ -107,7 +107,7 @@ thumbnail: ./images/folding.jpg
 The full description of this research area.
 ```
 
-Publications that share a `topic` with a research area — or name it via `project:` — appear
+Publications that share a `topic` with a research area, or name it via `project:`, appear
 automatically under "Related publications" on that page.
 
 ## Hide something without deleting it
@@ -129,11 +129,11 @@ The pages whose text isn't in content files live in `src/pages/`:
 | Contact details, map | `src/config/site.ts` (`contact`) |
 | Lab name, email, social links | `src/config/site.ts` |
 
-In those files, only change the text between the HTML tags — leave the tags themselves alone.
+In those files, only change the text between the HTML tags, and leave the tags themselves alone.
 
 ## If something breaks
 
 A bad edit fails the build rather than publishing a broken site, so the live site keeps
-working. Check the **Actions** tab on GitHub — the failed run names the file and line. The
+working. Check the **Actions** tab on GitHub; the failed run names the file and line. The
 usual causes are a missing quote around a title containing `:` or an apostrophe, or
 inconsistent indentation in `publications.yaml` (always two spaces, never tabs).

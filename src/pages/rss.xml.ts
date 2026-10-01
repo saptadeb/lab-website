@@ -9,7 +9,7 @@ export const GET: APIRoute = async (context) => {
     .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
   return rss({
-    title: `${SITE.name} — News`,
+    title: `${SITE.name} News`,
     description: SITE.description,
     site: context.site!,
     items: posts.map((post) => ({

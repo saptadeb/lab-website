@@ -40,7 +40,7 @@ const people = defineCollection({
     z.object({
       name: z.string(),
       role: z.enum(ROLES),
-      /** e.g. "Graduate Student", "Research Scientist" — shown under the name. */
+      /** e.g. "Graduate Student", "Research Scientist". Shown under the name. */
       title: z.string().optional(),
       photo: image().optional(),
       email: z.string().email().optional(),
@@ -81,7 +81,7 @@ const news = defineCollection({
 });
 
 /**
- * Publications live in one YAML file rather than one file each — easier to
+ * Publications live in one YAML file rather than one file each: easier to
  * maintain by hand and easy to generate from a BibTeX or Scholar export.
  */
 const publications = defineCollection({
