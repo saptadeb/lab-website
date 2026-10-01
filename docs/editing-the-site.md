@@ -91,8 +91,11 @@ The other options, for completeness:
   details are not in the CMS. They change rarely and live in files;
   [CONTENT.md](../CONTENT.md) says where.
 - **Break the live site.** If an edit produces content the site cannot build, the build
-  fails and the previous version stays up. You will get an email about it. Nothing the CMS
-  can write will take the site down.
+  fails and the previous version stays up. Nothing the CMS can write will take the site down.
+
+  **But nothing tells you yet.** A failed save is silent: the site simply does not change.
+  Until build-failure email is set up, check the repository's **Actions** tab after saving.
+  A green tick means it published.
 
 ## When something goes wrong
 
