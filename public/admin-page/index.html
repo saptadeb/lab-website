@@ -3,207 +3,62 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!--
-      This is what actually keeps the page out of search results. A robots.txt
-      Disallow would block the crawl that reads this tag, and robots.txt is only
-      honoured at a domain root anyway.
-    -->
+    <!-- Keeps the page out of search results. robots.txt is only read at a domain root. -->
     <meta name="robots" content="noindex, nofollow" />
     <title>Edit the site</title>
-    <!--
-      Every rule is scoped to .gate or body.gate-mode. Bare element selectors
-      would survive into the CMS and restyle its whole interface, because this
-      stylesheet outlives the gate unless loadCms() removes it.
-    -->
-    <style id="gate-style">
-      body.gate-mode {
-        margin: 0;
-        min-height: 100vh;
-        display: grid;
-        place-items: center;
-        padding: 16px;
-        background: #fff;
-        color: #1b1d22;
-        font: 16px/1.5 ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-      }
-      .gate {
-        --ink: #1b1d22;
-        --muted: #6b7280;
-        --surface: #fff;
-        --line: #e4e6ea;
-        --brand: #2b4c9b;
-        --error: #c0342b;
-        width: 100%;
-        max-width: 25rem;
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 28px;
-      }
-      .gate * { box-sizing: border-box; }
-      .gate h1 { margin: 0 0 4px; font-size: 1.25rem; font-weight: 600; }
-      .gate .sub { margin: 0 0 20px; color: var(--muted); font-size: 0.875rem; }
-      .gate label {
-        display: grid;
-        gap: 6px;
-        margin-bottom: 14px;
-        font-size: 0.875rem;
-        font-weight: 500;
-      }
-      .gate input {
-        font: inherit;
-        padding: 9px 11px;
-        border: 1px solid var(--line);
-        border-radius: 7px;
-        background: var(--surface);
-        color: var(--ink);
-      }
-      .gate button {
-        font: inherit;
-        font-weight: 500;
-        width: 100%;
-        padding: 10px;
-        border: 0;
-        border-radius: 7px;
-        background: var(--brand);
-        color: #fff;
-        cursor: pointer;
-      }
-      .gate button:hover { filter: brightness(1.08); }
-      .gate .error { margin: 14px 0 0; color: var(--error); font-size: 0.875rem; min-height: 1.4em; }
-      .gate .note {
-        margin: 20px 0 0;
-        padding-top: 16px;
-        border-top: 1px solid var(--line);
-        color: var(--muted);
-        font-size: 0.75rem;
-      }
-      @media (prefers-color-scheme: dark) {
-        body.gate-mode { background: #1b1d22; color: #eceef2; }
-        .gate {
-          --ink: #eceef2;
-          --muted: #a2a8b4;
-          --surface: #1b1d22;
-          --line: #353a44;
-          --brand: #8fa9e8;
-          --error: #f28b82;
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="./style.css" />
   </head>
-  <body class="gate-mode">
+  <body>
     <!--
-      This passphrase check keeps the page out of casual reach. It is NOT
-      security: the hash below ships in a public repository, so treat it as a
-      doormat rather than a lock.
-
-      The real boundary is GitHub itself. Nothing on this page can read or write
-      anything until you sign in with a GitHub account that has write access to
-      the repository, and that happens on the next screen.
-
-      To change the passphrase, run:
-        node -e "console.log(require('node:crypto').createHash('sha256').update('USER:PASS').digest('hex'))"
-      and paste the result into GATE_HASH below.
-
-      The inputs deliberately have no name attributes. If this script ever fails
-      to attach its submit handler, the browser falls back to a native GET, and
-      named fields would put the passphrase in the URL, the history, and the
-      referrer.
+      The password is checked by the Worker, not here, and the credential that can
+      write to the repository never reaches this page. Signing in returns a signed
+      session token that expires after eight hours.
     -->
-    <form class="gate" id="gate">
-      <h1>Edit the site</h1>
-      <p class="sub">Enter the shared passphrase, then sign in with GitHub.</p>
+    <section id="login">
+      <form id="login-form">
+        <h1>Edit the site</h1>
+        <p class="sub">Sign in to add and edit content.</p>
 
-      <label>
-        Username
-        <input id="user" autocomplete="username" autofocus required />
-      </label>
+        <div class="field">
+          <label for="login-user">Username</label>
+          <input id="login-user" type="text" autocomplete="username" value="root" autofocus required />
+        </div>
 
-      <label>
-        Passphrase
-        <input id="pass" type="password" autocomplete="current-password" required />
-      </label>
+        <div class="field">
+          <label for="login-pass">Password</label>
+          <input id="login-pass" type="password" autocomplete="current-password" required />
+        </div>
 
-      <button type="submit">Continue</button>
-      <p class="error" id="error" role="alert"></p>
+        <button id="login-button" class="primary" type="submit">Sign in</button>
+        <p id="login-error" role="alert"></p>
 
-      <p class="note">
-        Lost the passphrase, or seeing this by accident? You can always edit the
-        files directly on GitHub instead. See <code>CONTENT.md</code> in the
-        repository.
-      </p>
-    </form>
+        <p class="note">
+          Saving writes directly to the site. Changes appear within about a minute.
+          A mistake cannot break the live site: if the content will not build, the
+          previous version stays up and you get an email.
+        </p>
+      </form>
+    </section>
 
-    <script>
-      // sha256('username:passphrase'). See the comment above to change it.
-      const GATE_HASH =
-        '7edb9e78935ace77c356e45624e058b1ffb0c2e3ed7b445754b1c3806be38efb';
+    <section id="app" hidden>
+      <header class="bar">
+        <h1>Edit the site</h1>
+        <div>
+          <a class="ghost" href="../" style="text-decoration: none; padding: 7px 12px">View site</a>
+          <button id="sign-out" class="ghost" type="button">Sign out</button>
+        </div>
+      </header>
 
-      // Pinned to an exact version with a matching integrity hash. An unpinned
-      // CDN URL would let any future release run in a page that holds a GitHub
-      // token with write access to this repository. To upgrade, bump the version
-      // and recompute:
-      //   curl -sL <url> | openssl dgst -sha384 -binary | openssl base64 -A
-      const CMS_SRC = 'https://unpkg.com/@sveltia/cms@0.227.0/dist/sveltia-cms.js';
-      const CMS_INTEGRITY =
-        'sha384-GPE8FEk1RGNLIlJX+FpeLTak6r5qHQ7pDdYEDH3bUEFVwoI2LYlMp5u/Iw4Ej00o';
+      <nav id="nav" aria-label="Content sections"></nav>
 
-      /** Storage can throw outright when site data is blocked. */
-      function readFlag() {
-        try {
-          return sessionStorage.getItem('cms-unlocked') === '1';
-        } catch {
-          return false;
-        }
-      }
+      <div>
+        <div style="padding: 10px 16px 0; max-width: 46rem">
+          <p id="status" class="status" role="status" aria-live="polite"></p>
+        </div>
+        <div id="main"></div>
+      </div>
+    </section>
 
-      function writeFlag() {
-        try {
-          sessionStorage.setItem('cms-unlocked', '1');
-        } catch {
-          // Private browsing can refuse storage. Unlocking still works, it just
-          // will not survive a reload.
-        }
-      }
-
-      async function sha256(text) {
-        const bytes = new TextEncoder().encode(text);
-        const digest = await crypto.subtle.digest('SHA-256', bytes);
-        return [...new Uint8Array(digest)]
-          .map((b) => b.toString(16).padStart(2, '0'))
-          .join('');
-      }
-
-      function loadCms() {
-        document.getElementById('gate')?.remove();
-        // Drop the gate's styling so none of it reaches the CMS interface.
-        document.getElementById('gate-style')?.remove();
-        document.body.classList.remove('gate-mode');
-
-        const script = document.createElement('script');
-        script.src = CMS_SRC;
-        script.integrity = CMS_INTEGRITY;
-        script.crossOrigin = 'anonymous';
-        document.body.appendChild(script);
-      }
-
-      document.getElementById('gate')?.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const user = document.getElementById('user').value.trim();
-        const pass = document.getElementById('pass').value;
-        const error = document.getElementById('error');
-
-        if ((await sha256(`${user}:${pass}`)) === GATE_HASH) {
-          writeFlag();
-          loadCms();
-        } else {
-          error.textContent = 'That username or passphrase is not right.';
-          document.getElementById('pass').value = '';
-        }
-      });
-
-      // Stay unlocked for the rest of the browser session only. Runs last so a
-      // storage failure can never stop the submit handler above from attaching.
-      if (readFlag()) loadCms();
-    </script>
+    <script type="module" src="./app.js"></script>
   </body>
 </html>
